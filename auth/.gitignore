@@ -1,0 +1,5 @@
+*__pycache__
+venv 
+auth_venv
+*\.log
+.env
