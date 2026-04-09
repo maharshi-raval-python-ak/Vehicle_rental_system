@@ -17,7 +17,7 @@ class Payment(Base):
     payment_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     booking_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("backend.bookings.booking_id"))
     amount: Mapped[float] = mapped_column(Float)
-    payment_type: Mapped[str] = mapped_column(String(20))  # 'booking' or 'deposit' or 'damage'
+    payment_type: Mapped[str] = mapped_column(String(20))  # 'booking + deposit' or 'damage'
     method: Mapped[str] = mapped_column(String(50))
     status: Mapped[str] = mapped_column(String(50))
     transaction_id: Mapped[str] = mapped_column(String(100), unique=True)

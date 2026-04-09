@@ -3,6 +3,7 @@ from typing import Optional
 import uuid
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials, OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from app.services.roles_services import assign_role_to_users_service
 import jwt
 from jwt.exceptions import InvalidTokenError
 from app.schemas.users_schema import UserRegister
@@ -20,19 +21,44 @@ from app.core.config import settings
 from app.core.database import get_db
 
 
-def register_user(user_data: UserRegister, db: Session):
+def register_user(user_data: UserRegister, db: Session, role_name: str = "user"):
+    if role_name not in ["user", "vendor"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Public registration for this role is not allowed."
+        )
+
     db_user = users_crud.get_by_email(db, user_data.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered.")
 
-    new_user = User(
-        email=user_data.email, password_hash=get_password_hash(user_data.password)
-    )
+    try:
+        new_user = users_crud.create(
+            db, 
+            email=user_data.email, 
+            password_hash=get_password_hash(user_data.password)
+        )
+        
+        db.flush() 
 
-    new_user = users_crud.create(
-        db, email=new_user.email, password_hash=new_user.password_hash
-    )
-    return {"user_id": new_user.user_id, "email": new_user.email}
+        assign_role_to_users_service(
+            user_id=new_user.user_id, 
+            role_name=role_name, 
+            db=db
+        )
+
+        db.commit()
+        db.refresh(new_user)
+        
+        return {"user_id": new_user.user_id, "email": new_user.email, "role": role_name}
+
+    except Exception as e:
+        db.rollback()
+        
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=500, detail=f"Registration failed: {str(e)}")
+
 
 
 def authenticate_user(email: str, password: str, db: Session):
@@ -95,7 +121,7 @@ def login_service(
     return tokens_crud.create(db=db, token_data=new_token_record)
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
 
 def get_current_user(
@@ -194,6 +220,7 @@ def validate_service(access_token: str, db: Session):
 
     
     return {"user_id": user.user_id,
+            "email": user.email,
             "client_id": db_token.client_id,
             "roles": roles,
             "permissions": permissions,

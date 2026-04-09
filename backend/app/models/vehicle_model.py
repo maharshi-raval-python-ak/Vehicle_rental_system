@@ -26,6 +26,7 @@ class Vehicle(Base):
     fuel_type: Mapped[str] = mapped_column(String(50))
     seating_capacity: Mapped[int] = mapped_column(Integer)
     price_per_hour: Mapped[float] = mapped_column(Float)
+    deposit_amount: Mapped[float] = mapped_column(Float)
     status: Mapped[str] = mapped_column(String(50), default="available")
 
     vendor: Mapped["Vendor"] = relationship(back_populates="vehicles")

@@ -32,10 +32,13 @@ router = APIRouter(prefix="/auth")
 security_basic = HTTPBasic(auto_error=False)
 
 
-@router.post("/register", status_code=status.HTTP_201_CREATED, tags=["Auth"])
-def register(user_data: UserRegister, db: Session = Depends(get_db)):
-    return register_user(user_data, db)
+@router.post("/register/user" , tags=["Register"])
+def register_customer(user_in: UserRegister, db: Session = Depends(get_db)):
+    return register_user(user_in, db, role_name="user")
 
+@router.post("/register/vendor", tags=["Register"])
+def register_vendor(user_in: UserRegister, db: Session = Depends(get_db)):
+    return register_user(user_in, db, role_name="vendor")
 
 @router.post("/token", tags=["Auth"])
 def login(

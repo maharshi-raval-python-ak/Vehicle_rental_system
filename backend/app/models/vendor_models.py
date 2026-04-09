@@ -18,7 +18,6 @@ class Vendor(Base):
     name: Mapped[str] = mapped_column(String(100))
     email: Mapped[str] = mapped_column(String(100))
     phone: Mapped[str] = mapped_column(String(15))
-    password_hash: Mapped[str] = mapped_column(Text)
     is_verified: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 

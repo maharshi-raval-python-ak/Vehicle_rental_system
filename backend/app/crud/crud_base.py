@@ -1,5 +1,5 @@
 import uuid
-from typing import Generic, Type, TypeVar, List, Optional
+from typing import Generic, Type, TypeVar, List
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
