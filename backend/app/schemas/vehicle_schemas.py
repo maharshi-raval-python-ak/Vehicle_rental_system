@@ -10,10 +10,16 @@ class VehicleBase(BaseModel):
     seating_capacity: int
     price_per_hour: float
     deposit_amount: float
-    location_id: uuid.UUID
+    # location_id: uuid.UUID
 
+class VehicleCreateOuter(VehicleBase):
+    # vendor_id: uuid.UUID
+    area: str
+    
+    
 class VehicleCreate(VehicleBase):
     vendor_id: uuid.UUID
+    location_id: uuid.UUID
 
 class VehicleUpdate(BaseModel):
     type: Optional[str] = None
@@ -22,3 +28,13 @@ class VehicleUpdate(BaseModel):
     seating_capacity: Optional[int] = None
     price_per_hour: Optional[float] = None
     status: Optional[str] = None
+    area: Optional[str] = None
+    location_id: Optional[uuid.UUID] = None
+    
+class VehicleResponse(VehicleCreate):
+    vendor_id: uuid.UUID
+    location_id: uuid.UUID
+    vehicle_id: uuid.UUID
+    status: str
+    
+    model_config = {"from_attributes": True}

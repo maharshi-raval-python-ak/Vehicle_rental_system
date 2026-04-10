@@ -76,3 +76,4 @@ def authenticated(allowed_roles: list[str] | None = None,required_permissions: l
             return await func(*args, **kwargs)
         return wrapper
     return decorator
+

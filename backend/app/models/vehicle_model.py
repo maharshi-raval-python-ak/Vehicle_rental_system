@@ -30,6 +30,6 @@ class Vehicle(Base):
     status: Mapped[str] = mapped_column(String(50), default="available")
 
     vendor: Mapped["Vendor"] = relationship(back_populates="vehicles")
-    location: Mapped["Location"] = relationship(back_populates="vehicles")
+    location: Mapped["Location"] = relationship(back_populates="vehicles")  
     bookings: Mapped[List["Booking"]] = relationship(back_populates="vehicle")
     reviews: Mapped[List["Review"]] = relationship(back_populates="vehicle") 

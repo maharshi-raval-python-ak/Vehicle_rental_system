@@ -19,8 +19,6 @@ class Trip(Base):
     booking_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("backend.bookings.booking_id"))
     start_time_actual: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
     end_time_actual: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
-    otp_code: Mapped[str] = mapped_column(String(10))
-    otp_verified: Mapped[bool] = mapped_column(default=False)
     status: Mapped[str] = mapped_column(String(50))
 
     booking: Mapped["Booking"] = relationship(back_populates="trip")
