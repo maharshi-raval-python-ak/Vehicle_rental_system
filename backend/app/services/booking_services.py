@@ -5,6 +5,7 @@ from app.dao.vehicle_dao import vehicle_dao
 from app.schemas.booking_schemas import BookingCreate, BookingCreateOuter
 from app.crud.booking_crud import booking_crud
 from app.utils.email_utils import send_booking_emails
+from app.dao.booking_dao import booking_dao
 
 
 class BookingService:
@@ -21,7 +22,14 @@ class BookingService:
         duration = (booking_in.end_time - booking_in.start_time).total_seconds() / 3600
         if duration <= 0:
             raise HTTPException(status_code=400, detail="Invalid time range")
-
+        
+        if not booking_dao.is_vehicle_available(db, booking_in.vehicle_id, booking_in.start_time, booking_in.end_time):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                detail="Vehicle is not available for the selected time range"
+            )
+            
+            
         total_price = duration * vehicle.price_per_hour
         security_deposit = vehicle.deposit_amount
         vendor_payout = total_price * 0.90  # -> 10% platform fee
