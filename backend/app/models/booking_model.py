@@ -21,12 +21,13 @@ class Booking(Base):
     vehicle_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("backend.vehicles.vehicle_id"))
     start_time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     end_time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    otp: Mapped[str] = mapped_column(String, nullable=False)
     
     total_price: Mapped[float] = mapped_column(Float)
     vendor_payout: Mapped[float] = mapped_column(Float)
     security_deposit: Mapped[float] = mapped_column(Float)
     
-    status: Mapped[str] = mapped_column(String(50), default="pending")
+    status: Mapped[str] = mapped_column(String(50), default="pending") # Pending or On-trip or Completed or Cancelled
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
